@@ -9,6 +9,10 @@ from weka.classifiers import Classifier
 # cls = Classifier(classname="weka.classifiers.trees.J48")
 # cls = Classifier(classname="weka.classifiers.evaluation")
 
+from sklearn.linear_model import LogisticRegression as LR
+from sklearn.isotonic import IsotonicRegression as IR
+
+import numpy
 
 
 # iris_data = loader.load_file(iris_file)
@@ -22,107 +26,63 @@ jvm.start(packages=True)
 
 loader = Loader("weka.core.converters.ArffLoader")
 
-data = loader.load_file("anneal.arff")
-data.class_is_last()
+instances = loader.load_file("/home/farzad/Desktop/jrnl/semiSupervisedPython/originDataset/bupa/train.arff")
+instances.class_is_last()
 
-j48 = Classifier(classname="weka.classifiers.trees.J48")
+tree = Classifier(classname="weka.classifiers.trees.J48")
 
-j48.build_classifier(data)
+tree.build_classifier(instances)
+# clsLabel = j48.classify_instance(data.get_instance(0))
+# print("====================================>",clsLabel)
 
-clsLabel = j48.classify_instance(data.get_instance(0))
 
-print("====================================>",clsLabel)
+
+
+
+
+p_train = numpy.zeros(shape=(instances.num_instances,1))
+y_train = numpy.zeros(shape=(instances.num_instances,1))
+
+for i,instance in enumerate(instances) :
+    dist = tree.distribution_for_instance(instance)
+    p_train[i] = [ dist[1]  ]
+    y_train[i] = [tree.classify_instance(instance)]
+
+
+
+print("p_train ======> > > >>>> > > >>>> " , len(p_train))
+print("p_train ======> > > >>>> > > >>>> " , len(y_train))
+print("p_train ======> > > >>>> > > >>>> " , instances.num_instances)
+# print("p_train ======> > > >>>> > > >>>> " , p_train)
+# print("p_train ======> > > >>>> > > >>>> " , p_train.reshape( -1, 1 ))
+
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
+
+lr = LR(solver='lbfgs')                                                      
+lr.fit( p_train , numpy.ravel(y_train,order='C') )     # LR needs X to be 2-dimensional
+# lr.fit( p_train.reshape( -1, 1 ), y_train )     # LR needs X to be 2-dimensional
+
+dist = tree.distribution_for_instance(instances.get_instance(80))[1]
+tmp = numpy.zeros(shape=(1,1))
+tmp[0] = [dist]
+# print(dist)
+print("lr.predict_proba( dist.reshape( -1, 1 ))[:,1] ====>>>>>" , instances)
+# print("lr.predict_proba( dist.reshape( -1, 1 ))[:,1] ====>>>>>" , dist)
+# print("lr.predict_proba( dist.reshape( -1, 1 ))[:,1] ====>>>>>" , instances.get_instance(20))
+# print("lr.predict_proba( dist.reshape( -1, 1 ))[:,1] ====>>>>>" , lr.predict(tmp.reshape(1, -1)))
+# print("lr.predict_proba( dist.reshape( -1, 1 )) ====>>>>>" , lr.predict_proba( tmp.reshape(1, -1)))
+
+
+ir = IR( out_of_bounds = 'clip' )
+ir.fit(numpy.ravel(p_train,order='C')  , numpy.ravel(y_train,order='C')  )
+print("ir.transform( tmp.reshape(1, -1)) =========>>>>>>   ",ir.transform( numpy.ravel(tmp,order='C'))[0])
+# print("ir.transform( tmp.reshape(1, -1)) =========>>>>>>   ", numpy.ravel(tmp,order='C') )
+
+for i in lr.predict_proba( tmp.reshape(1, -1))[0] :
+    print(i,"\n")
 
 
 
 jvm.stop()
 
-
-
-
-
-
-
-def LabeledUnlabeldata(data, unlabeled, tree , y) :
-    
-    data1 = Instances.copy_instances(data)
-    labeling = Instances.copy_instances(unlabeled)
-    tree.build_classifier(data1)
-    
-    j = i = s = l = 0
-
-    # iris_data = loader.load_file(iris_file)
-
-    while i < labeling.num_instances:
-        clsLabel= tree.classify_instance(labeling.get_instance(i))
-        dist = cls.distribution_for_instance(labeling.get_instance(i))
-
-        # r=eval.getPrediction(tree, labeling.instance(i));
-        # predict[i]=r.predicted();
-
-        for dk in dist :
-            if dk >= y :
-
-                j=i
-                while j < labeling.num_instances :
-                    clsLabel= tree.classify_instance(labeling.get_instance(j))
-                    # r=eval.getPrediction(tree, labeling.instance(i));
-                    dist = cls.distribution_for_instance(labeling.get_instance(j))
-
-                    for dp in dist :
-                        if dp >= y :
-                            inst = labeling.get_instance(i)
-                            inst.set_value(inst.class_index,clsLabel)
-
-
-
-                            pass
-
-        pass
-
-    # while (i<labeling.numInstances()){
-    #         clsLabel= tree.classifyInstance(labeling.instance(i));
-    #         r=eval.getPrediction(tree, labeling.instance(i));
-    #         double[] dist=tree.distributionForInstance(labeling.instance(i));
-    #         predict[i]=r.predicted();
-    #         for (int k=0; k<dist.length; k++){
-    #             if(dist[k]>=y){
-
-
-
-    #                 j=i;
-    #                 while(j<labeling.numInstances()){
-
-    #                     clsLabel= tree.classifyInstance(labeling.instance(j));
-    #                     r=eval.getPrediction(tree, labeling.instance(j));
-                        # dist=tree.distributionForInstance(labeling.instance(j));
-                        # for (int p=0; p<dist.length; p++){
-                            # if(dist[p]>=y){
-                                # //   System.out.println("tanhan="+j+"\n");
-                                labeling.instance(j).setClassValue(clsLabel);
-                                Instance x = labeling.instance(j);
-                                //   System.out.println("\n X= "+x);
-                                data1.add(x);
-                                labeling.delete(j);
-                                l++;
-                                j=j-1;
-                            }// if
-                        }// for
-                        //    predict[j]=r.predicted();
-                        j++;
-                    }// while
-                }// if
-                if( (k==(dist.length-1)) && (l!=0) ){
-                    tree.setUseLaplace(true);
-                    tree.buildClassifier(data1);
-                    i=-1; s=s+l; l=0;
-                }
-            }// for
-            i++;
-        }// while
-
-        data1.compactify();
-        return data1;
-
-    }
-"""

@@ -1,5 +1,8 @@
 import numpy
 
+import warnings
+
+
 from weka.core.converters import Loader
 
 from weka.core.dataset import Instances
@@ -8,6 +11,13 @@ from weka.classifiers import Evaluation
 from weka.core.classes import Random
 
 from weka.classifiers import Classifier
+
+
+
+from sklearn.linear_model import LogisticRegression as LR
+from sklearn.isotonic import IsotonicRegression as IR
+
+
 # cls = Classifier(classname="weka.classifiers.trees.J48", options=["-A"])
 # cls = Classifier(classname="weka.classifiers.evaluation")
 
@@ -68,9 +78,70 @@ def ClassifyWithDT(f3, test, tree , fileOut) :
     return eval
 
 
+def calculate_probability_distribution(tree , instances , index , cal_method =None):
+
+	if cal_method == None :
+		return tree.distribution_for_instance(instances.get_instance(index))
+
+	elif cal_method == 'Platt' :
+
+		p_train = numpy.zeros(shape=(instances.num_instances,1))
+		y_train = numpy.zeros(shape=(instances.num_instances,1))
+
+		for i,instance in enumerate(instances) :
+		    dist = tree.distribution_for_instance(instance)
+		    p_train[i] = [ (dist[1] - 0.5)*2.0 ]
+		    y_train[i] = [tree.classify_instance(instance)]
 
 
-def LabeledUnlabeldata(data, unlabeled, tree , y) :
+		dist = (tree.distribution_for_instance(instances.get_instance(index))[1]-0.5)*2.0
+		tmp = numpy.zeros(shape=(1,1))
+		tmp[0] = [dist]
+
+		warnings.filterwarnings("ignore", category=FutureWarning)
+		lr = LR(solver='lbfgs')                                                      
+		lr.fit( p_train , numpy.ravel(y_train,order='C') )
+
+		return lr.predict_proba( tmp.reshape(1, -1))[0]
+
+
+	elif cal_method == 'Isotonic' :
+
+		p_train = numpy.zeros(shape=(instances.num_instances,1))
+		y_train = numpy.zeros(shape=(instances.num_instances,1))
+
+		for i,instance in enumerate(instances) :
+		    dist = tree.distribution_for_instance(instance)
+		    p_train[i] = [ dist[1] ]
+		    y_train[i] = [tree.classify_instance(instance)]
+
+
+		dist = tree.distribution_for_instance(instances.get_instance(index))[1]
+		tmp = numpy.zeros(shape=(1,1))
+		tmp[0] = [dist]
+
+
+		ir = IR( out_of_bounds = 'clip' )
+		ir.fit(numpy.ravel(p_train,order='C')  , numpy.ravel(y_train,order='C'))
+
+		p = ir.transform( numpy.ravel(tmp,order='C'))[0]
+		return [p,1-p]
+		
+
+	elif cal_method == 'ProbabilityCalibrationTree' :
+
+
+		pass
+	elif cal_method == 'Conformal' :
+
+
+
+		pass
+	elif cal_method == 'Venn' :
+		pass
+
+
+def LabeledUnlabeldata(data, unlabeled, tree, y, cal_method=None ) :
     
     data1 = Instances.copy_instances(data)
     labeling = Instances.copy_instances(unlabeled)
@@ -78,14 +149,13 @@ def LabeledUnlabeldata(data, unlabeled, tree , y) :
     
     j = i = s = l = 0
 
-    # iris_data = loader.load_file(iris_file)
-
     while i < labeling.num_instances:
         clsLabel= tree.classify_instance(labeling.get_instance(i))
-        dist = tree.distribution_for_instance(labeling.get_instance(i))
 
-        # r=eval.getPrediction(tree, labeling.instance(i));
-        # predict[i]=r.predicted();
+        ##### probability calculation #####
+        # dist = tree.distribution_for_instance(labeling.get_instance(i))
+        dist = calculate_probability_distribution(tree , labeling , i , cal_method)
+
 
         for k,dk in enumerate(dist) :
             if dk >= y :
@@ -93,8 +163,10 @@ def LabeledUnlabeldata(data, unlabeled, tree , y) :
                 j=i
                 while j < labeling.num_instances :
                     clsLabel= tree.classify_instance(labeling.get_instance(j))
-                    # r=eval.getPrediction(tree, labeling.instance(i));
-                    dist = tree.distribution_for_instance(labeling.get_instance(j))
+
+                    ##### probability calculation #####
+                    # dist = tree.distribution_for_instance(labeling.get_instance(j))
+                    dist = calculate_probability_distribution(tree , labeling , j , cal_method)
 
                     for dp in dist :
                         if dp >= y :
@@ -158,8 +230,8 @@ for dataset in datasaetsName :
             labledDataSet , UnlabledDataSet = splitTrainSet(data);
 
             
-            # tree = Classifier(classname="weka.classifiers.trees.J48", options=["-A"])
-            tree = Classifier(classname="weka.classifiers.trees.J48")
+            tree = Classifier(classname="weka.classifiers.trees.J48", options=["-A"])
+            # tree = Classifier(classname="weka.classifiers.trees.J48")
 
             tree.build_classifier(labledDataSet)
             
@@ -168,7 +240,7 @@ for dataset in datasaetsName :
             
             fileOut.write("Labeled data======== " + str(1.0 - eval.error_rate * 100) + " number of instances== " + str(labledDataSet.num_instances) + "\n")
             
-            Newtrainpool = LabeledUnlabeldata(labledDataSet, UnlabledDataSet, tree, y)
+            Newtrainpool = LabeledUnlabeldata(labledDataSet, UnlabledDataSet, tree, y , cal_method="Platt")
 
             fileOut.write("Labeled data======== " + str(1.0 - eval.error_rate * 100) + " number of instances== " + str(labledDataSet.num_instances) + "\n")
 
@@ -180,7 +252,7 @@ for dataset in datasaetsName :
 
 
 
-            ClassifyWithDT(Newtrainpool, test, tree, fileOut)
+            ClassifyWithDT(Newtrainpool, test, tree, fileOut )
 
             fileOut.write("\n")
             fileOut.write("########################################################\n")
