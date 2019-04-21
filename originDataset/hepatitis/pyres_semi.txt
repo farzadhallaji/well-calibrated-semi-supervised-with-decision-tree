@@ -1,0 +1,25 @@
+
+
+##################### y =>  0.8329999999999999
+Labeled data======== 80.0 number of instances== 10
+
+
+Labeled data======== 80.0 number of instances== 10
+           Decision Tree                       
+
+      precision   recall     areaUnderROC            
+
+nan  0.0  0.5
+0.8  1.0  0.5
+
+
+Self-Training   data========80.0 number of instances==105
+
+ Error Rate==0.2
+
+     precision   recall     areaUnderROC            
+
+nan  0.0  0.5
+0.8  1.0  0.5
+
+

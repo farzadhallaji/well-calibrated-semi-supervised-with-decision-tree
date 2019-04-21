@@ -1,0 +1,251 @@
+hepatitis
+
+########################################################
+
+##################### y =>  0.999
+Labeled data======== 80.0 number of instances== 10
+
+
+Labeled data======== 80.0 number of instances== 10
+           Decision Tree                       
+
+      precision   recall     areaUnderROC            
+
+nan  0.0  0.5
+0.8  1.0  0.5
+
+
+Self-Training   data========80.0 number of instances==10
+
+ Error Rate==0.2
+
+     precision   recall     areaUnderROC            
+
+nan  0.0  0.5
+0.8  1.0  0.5
+
+########################################################
+
+##################### y =>  0.899
+Labeled data======== 78.0 number of instances== 10
+
+
+Labeled data======== 78.0 number of instances== 10
+           Decision Tree                       
+
+      precision   recall     areaUnderROC            
+
+0.4444444444444444  0.4  0.67375
+0.8536585365853658  0.875  0.67375
+
+
+Self-Training   data========78.0 number of instances==10
+
+ Error Rate==0.22
+
+     precision   recall     areaUnderROC            
+
+0.4444444444444444  0.4  0.67375
+0.8536585365853658  0.875  0.67375
+
+########################################################
+
+##################### y =>  0.799
+Labeled data======== 65.99999999999999 number of instances== 10
+
+
+Labeled data======== 65.99999999999999 number of instances== 10
+           Decision Tree                       
+
+      precision   recall     areaUnderROC            
+
+0.23076923076923078  0.3  0.5625
+0.8108108108108109  0.75  0.5625
+
+
+Self-Training   data========65.99999999999999 number of instances==81
+
+ Error Rate==0.34
+
+     precision   recall     areaUnderROC            
+
+0.23076923076923078  0.3  0.5625
+0.8108108108108109  0.75  0.5625
+
+########################################################
+
+##################### y =>  0.6990000000000001
+Labeled data======== 80.0 number of instances== 10
+
+
+Labeled data======== 80.0 number of instances== 10
+           Decision Tree                       
+
+      precision   recall     areaUnderROC            
+
+nan  0.0  0.5
+0.8  1.0  0.5
+
+
+Self-Training   data========80.0 number of instances==105
+
+ Error Rate==0.2
+
+     precision   recall     areaUnderROC            
+
+nan  0.0  0.5
+0.8  1.0  0.5
+
+########################################################
+
+##################### y =>  0.5990000000000001
+Labeled data======== 82.0 number of instances== 10
+
+
+Labeled data======== 82.0 number of instances== 10
+           Decision Tree                       
+
+      precision   recall     areaUnderROC            
+
+0.5714285714285714  0.4  0.70125
+0.8604651162790697  0.925  0.70125
+
+
+Self-Training   data========82.0 number of instances==105
+
+ Error Rate==0.18
+
+     precision   recall     areaUnderROC            
+
+0.5714285714285714  0.4  0.70125
+0.8604651162790697  0.925  0.70125
+
+########################################################
+
+##################### y =>  0.4990000000000001
+Labeled data======== 86.0 number of instances== 10
+
+
+Labeled data======== 86.0 number of instances== 10
+           Decision Tree                       
+
+      precision   recall     areaUnderROC            
+
+0.6666666666666666  0.6  0.7575
+0.9024390243902439  0.925  0.7575
+
+
+Self-Training   data========86.0 number of instances==105
+
+ Error Rate==0.14
+
+     precision   recall     areaUnderROC            
+
+0.6666666666666666  0.6  0.7575
+0.9024390243902439  0.925  0.7575
+
+########################################################
+
+##################### y =>  0.39900000000000013
+Labeled data======== 80.0 number of instances== 10
+
+
+Labeled data======== 80.0 number of instances== 10
+           Decision Tree                       
+
+      precision   recall     areaUnderROC            
+
+nan  0.0  0.5
+0.8  1.0  0.5
+
+
+Self-Training   data========80.0 number of instances==105
+
+ Error Rate==0.2
+
+     precision   recall     areaUnderROC            
+
+nan  0.0  0.5
+0.8  1.0  0.5
+
+########################################################
+
+##################### y =>  0.29900000000000015
+Labeled data======== 80.0 number of instances== 10
+
+
+Labeled data======== 80.0 number of instances== 10
+           Decision Tree                       
+
+      precision   recall     areaUnderROC            
+
+0.5  0.6  0.7625
+0.8947368421052632  0.85  0.7625
+
+
+Self-Training   data========80.0 number of instances==109
+
+ Error Rate==0.2
+
+     precision   recall     areaUnderROC            
+
+0.5  0.6  0.7625
+0.8947368421052632  0.85  0.7625
+
+########################################################
+
+##################### y =>  0.19900000000000018
+Labeled data======== 80.0 number of instances== 10
+
+
+Labeled data======== 80.0 number of instances== 10
+           Decision Tree                       
+
+      precision   recall     areaUnderROC            
+
+nan  0.0  0.5
+0.8  1.0  0.5
+
+
+Self-Training   data========80.0 number of instances==105
+
+ Error Rate==0.2
+
+     precision   recall     areaUnderROC            
+
+nan  0.0  0.5
+0.8  1.0  0.5
+
+########################################################
+
+##################### y =>  0.0990000000000002
+Labeled data======== 74.0 number of instances== 10
+
+
+Labeled data======== 74.0 number of instances== 10
+           Decision Tree                       
+
+      precision   recall     areaUnderROC            
+
+0.4117647058823529  0.7  0.72125
+0.9090909090909091  0.75  0.72125
+
+
+Self-Training   data========74.0 number of instances==200
+
+ Error Rate==0.26
+
+     precision   recall     areaUnderROC            
+
+0.4117647058823529  0.7  0.72125
+0.9090909090909091  0.75  0.72125
+
+########################################################
+
+
+
+########################################################
+########################################################
+########################################################
+
+

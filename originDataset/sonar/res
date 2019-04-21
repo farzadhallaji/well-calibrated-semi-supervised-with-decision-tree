@@ -1,0 +1,27 @@
+sonar
+
+##################### y =>  0.7499999999999998
+i 0   sublabeledSize===7
+i 1   sublabeledSize===8
+Labeled data======== 69.11764705882352 number of instances== 15
+
+
+ Labeled data========69.11764705882352 number of instances== 15
+           Decision Tree                       
+
+      precision   recall     areaUnderROC            
+ 
+ 0.72  0.5625  0.6671006944444444
+ 0.6744186046511628  0.8055555555555556  0.6671006944444444
+
+
+Self-Training   data========69.11764705882352 number of instances==140
+
+ Error Rate==0.3088235294117647
+
+     precision   recall     areaUnderROC            
+ 
+0.72  0.5625  0.6671006944444444
+0.6744186046511628  0.8055555555555556  0.6671006944444444
+
+########################################################

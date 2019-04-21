@@ -1,0 +1,70 @@
+PathToData = "/home/farzad/Desktop/jrnl/semiWithTree/originDataset/"
+
+datasaetsName = ["breast-cancer","bupa","colic","diabetes","heart","hepatitis",
+                "ionosphere","sick","sonar","tic-tac-toe","twomoons","votes"]
+
+path = PathToData+"/result.txt"
+
+with open(path, "w") as f:
+	for ress in datasaetsName :
+		res0 = open(PathToData+ress+"/res.txt", "r")
+		res1 = open(PathToData+ress+"/res_pcaltr.txt", "r")
+		res2 = open(PathToData+ress+"/res_iso.txt", "r")
+		res3 = open(PathToData+ress+"/res_platt.txt", "r")
+
+		s0 = res0.read()
+		s1 = res1.read()
+		s2 = res2.read()
+		s3 = res3.read()
+
+		lines0 = s0.split("\n")
+		lines1 = s1.split("\n")
+		lines2 = s2.split("\n")
+		lines3 = s3.split("\n")
+
+
+		l00 = lines0[5].split("instances==")
+		l0 = lines0[17].split("instances==")
+		l1 = lines1[17].split("instances==")
+		l2 = lines2[17].split("instances==")
+		l3 = lines3[17].split("instances==")
+
+		f.write(ress + " dataset :\n\n")
+		f.write("Decision Tree : "+"\n")
+		f.write(" number of labeled instances = " + l00[1]+"\n")
+		f.write(lines0[11]+"\n")
+		f.write(lines0[13]+"\n")
+		f.write(lines0[14]+"\n\n\n")
+
+		f.write("Self-Training without Calibration : "+"\n")
+		f.write(" number of labeled instances = " + l0[1]+"\n")
+		f.write(lines0[19]+"\n\n")
+		f.write(lines0[21]+"\n")
+		f.write(lines0[23]+"\n")
+		f.write(lines0[24]+"\n\n\n")
+
+		f.write("Self-Training with Probability Calibration Tree : "+"\n")
+		f.write(" number of labeled instances = " + l1[1]+"\n")
+		f.write(lines1[19]+"\n\n")
+		f.write(lines1[21]+"\n")
+		f.write(lines1[23]+"\n")
+		f.write(lines1[24]+"\n\n\n")
+
+		f.write("Self-Training with Isotonic Regression Calibration : "+"\n")
+		f.write(" number of labeled instances = " + l2[1]+"\n")
+		f.write(lines2[19]+"\n\n")
+		f.write(lines2[21]+"\n")
+		f.write(lines2[23]+"\n")
+		f.write(lines2[24]+"\n\n\n")
+
+		f.write("Self-Training with Platt Scaling Calibration : "+"\n")
+		f.write(" number of labeled instances = " + l3[1]+"\n")
+		f.write(lines3[19]+"\n\n")
+		f.write(lines3[21]+"\n")
+		f.write(lines3[23]+"\n")
+		f.write(lines3[24]+"\n\n\n")
+
+		f.write("######################################################\n\n\n")
+
+
+

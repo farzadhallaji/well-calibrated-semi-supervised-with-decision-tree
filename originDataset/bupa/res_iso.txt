@@ -1,0 +1,27 @@
+
+
+##################### y =>  0.3329999999999994
+i 0   sublabeledSize===10
+i 1   sublabeledSize===13
+Labeled data======== 64.60176991150442 number of instances== 23
+
+
+ Labeled data========64.60176991150442 number of instances== 23
+           Decision Tree                       
+
+      precision   recall     areaUnderROC            
+ 
+0.5897435897435898  0.48936170212765956  0.6808510638297872
+0.6756756756756757  0.7575757575757576  0.6808510638297872
+
+
+Self-Training   data========65.48672566371681 number of instances==226
+
+ Error Rate==0.34513274336283184
+
+     precision   recall     areaUnderROC            
+ 
+0.5952380952380952  0.5319148936170213  0.6347517730496454
+0.6901408450704225  0.7424242424242424  0.6347517730496454
+
+
