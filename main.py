@@ -277,7 +277,7 @@ for dataset in datasaetsName :
     test =loader.load_file(PathToData + dataset + "/test.arff")
 
     # for y in range(0.999,0.02,-0.001) :
-    for y in np.arange(0.999,0.52,-0.01) :
+    for y in np.arange(0.999,0.52,-0.03) :
         try:
             
             fileOut.write("##################### y =>  " + str(y)+"\n");
@@ -301,8 +301,8 @@ for dataset in datasaetsName :
             
             fileOut.write("Labeled data======== " + str((1.0 - eval.error_rate )* 100) + " number of instances== " + str(labledDataSet.num_instances) + "\n")
             
-            Newtrainpool = LabeledUnlabeldata(labledDataSet, UnlabledDataSet, tree, y )
-            # Newtrainpool = LabeledUnlabeldata(labledDataSet, UnlabledDataSet, tree, y , cal_method=Method)
+            # Newtrainpool = LabeledUnlabeldata(labledDataSet, UnlabledDataSet, tree, y )
+            Newtrainpool = LabeledUnlabeldata(labledDataSet, UnlabledDataSet, tree, y , cal_method=Method)
 
             fileOut.write("\n\nLabeled data======== " + str((1.0 - eval.error_rate )* 100) + " number of instances== " + str(labledDataSet.num_instances) + "\n")
 
