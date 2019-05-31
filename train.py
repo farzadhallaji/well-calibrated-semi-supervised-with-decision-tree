@@ -207,46 +207,84 @@ def LabeledUnlabeldata0(data, unlabeled, tree, y, cal_method=None ) :
     return data1
 
 
-def LabeledUnlabeldata(data, unlabeled, tree, y, cal_method=None ) :
+# def LabeledUnlabeldata(data, unlabeled, tree, y, cal_method=None ) :
     
-	data1 = Instances.copy_instances(data)
-	labeling = Instances.copy_instances(unlabeled)
-	tree.build_classifier(data1)
-	update=False
-	it=0
-	labeling_num_instances = labeling.num_instances
-	while labeling.num_instances > 3 and it < labeling_num_instances:
-		it+=1
-		update = False
-		removed_index=set()
-		print("labeling.num_instances ===>>   " , labeling.num_instances)
+# 	data1 = Instances.copy_instances(data)
+# 	labeling = Instances.copy_instances(unlabeled)
+# 	tree.build_classifier(data1)
+# 	update=False
+# 	it=0
+# 	labeling_num_instances = labeling.num_instances
+# 	while labeling.num_instances > 3 and it < labeling_num_instances:
+# 		it+=1
+# 		update = False
+# 		removed_index=set()
+# 		print("labeling.num_instances ===>>   " , labeling.num_instances)
 
-		for i,xi in enumerate(labeling) :
-			clsLabel= tree.classify_instance(xi)
-			dist = calculate_probability_distribution(tree , labeling , i , cal_method)
-			for dp in dist :
-				if dp >= y :
-					update = True
-					xi.set_value(xi.class_index,clsLabel)
-					data1.add_instance(xi)
-					removed_index.add(i)
+# 		for i,xi in enumerate(labeling) :
+# 			clsLabel= tree.classify_instance(xi)
+# 			dist = calculate_probability_distribution(tree , labeling , i , cal_method)
+# 			for dp in dist :
+# 				if dp >= y :
+# 					update = True
+# 					xi.set_value(xi.class_index,clsLabel)
+# 					data1.add_instance(xi)
+# 					removed_index.add(i)
 
-		print("labeling ==================>>", labeling.num_instances)
-		print("removed_index ==================>>", len(removed_index))
-		removed_index_list = sorted(removed_index)
-		for i,ii in enumerate(removed_index_list) :
-			labeling.delete(ii-i)
-		print("labeling ==================>>", labeling.num_instances)
-
-
-		if update:
-			tree.build_classifier(data1)
+# 		print("labeling ==================>>", labeling.num_instances)
+# 		print("removed_index ==================>>", len(removed_index))
+# 		removed_index_list = sorted(removed_index)
+# 		for i,ii in enumerate(removed_index_list) :
+# 			labeling.delete(ii-i)
+# 		print("labeling ==================>>", labeling.num_instances)
 
 
-	data1.compactify()
-	return data1
+# 		if update:
+# 			tree.build_classifier(data1)
 
 
+# 	data1.compactify()
+# 	return data1
+
+def LabeledUnlabeldata(data, unlabeled, y, cal_method=None ) :
+    itree = unlabeled.num_instances
+    data1 = Instances.copy_instances(data)
+    labeling = Instances.copy_instances(unlabeled);
+
+    tree = Classifier(classname="weka.classifiers.trees.J48", options=["-A"])
+    # tree = Classifier(classname="weka.classifiers.trees.J48")
+    tree.build_classifier(data1)
+
+    while(itree>0 && labeling.num_instances()>0)
+
+        removedIndex =[]
+        boolean trainAgain = false;
+        for (int i=0 ; i<labeling.size() ; i++){
+
+            dist=tree.distributionForInstance(labeling.instance(i));
+            Instance instance = labeling.instance(i);
+
+            for (int k=0; k<dist.length; k++){
+                if(dist[k]>=y){
+                    removedIndex.append(i);
+                    double cls = tree.classifyInstance(labeling.instance(i));
+                    instance.setValue(instance.numAttributes()-1 ,cls);
+                    data1.add(instance);
+                    trainAgain = true;
+                    break
+        if(trainAgain){
+            int remv=0;
+            for(int i = 0 ; i < len(removedIndex) ; i++){
+                labeling.remove(removedIndex.get(i)-remv);
+                remv++;
+            }
+            data1.compactify();
+            labeling.compactify();
+            tree.setUseLaplace(true);
+            tree.buildClassifier(data1);
+        itree-=1
+    data1.compactify();
+    return data1;
 
 
 
@@ -260,7 +298,7 @@ loader = Loader("weka.core.converters.ArffLoader")
 Method = "semii"
 
 
-datasaetsName = ["sick","heart","diabetes","bupa"]
+datasaetsName = ["breast-cancer"]
 # datasaetsName = ["breast-cancer","bupa","colic","diabetes","heart","hepatitis","ionosphere","sick","sonar","tic-tac-toe","twomoons","votes"]
 PathToData = "./originDataset/"
 
@@ -278,7 +316,7 @@ for dataset in datasaetsName :
     test =loader.load_file(PathToData + dataset + "/test.arff")
 
     # for y in range(0.999,0.02,-0.001) :
-    for y in np.arange(0.999,0.499,-0.01) :
+    for y in np.arange(0.999,0.85,-0.01) :
         try:
             
             fileOut.write("##################### y =>  " + str(y)+"\n");
@@ -312,8 +350,6 @@ for dataset in datasaetsName :
 
             for i in range(test.get_instance(0).num_classes) :
                 fileOut.write(str(eval.precision(i)) +"  "+str(eval.recall(i)) + "  "  +  str(eval.area_under_roc(i))+"\n")
-
-
 
             ClassifyWithDT(Newtrainpool, test, tree, fileOut )
 

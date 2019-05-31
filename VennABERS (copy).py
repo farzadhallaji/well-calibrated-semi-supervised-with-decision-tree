@@ -17,8 +17,10 @@ def nextToTop(stack):
 
 # perhaps inefficient but clear implementation
 def nonleftTurn(a,b,c):   
+    
     d1 = b-a
     d2 = c-b
+
     return np.cross(d1,d2)<=0
 
 def nonrightTurn(a,b,c):   
@@ -46,32 +48,42 @@ kPrime = None
 
 def algorithm1(P):
     global kPrime
-    
+
     S = []
     P[-1] = np.array((-1,-1))
+
     push(P[-1],S)
     push(P[0],S)
+
     for i in range(1,kPrime+1):
         while len(S)>1 and nonleftTurn(nextToTop(S),top(S),P[i]):
             pop(S)
-        push(P[i],S)
+        push(P[i],S)    
     return S
 
 def algorithm2(P,S):
     global kPrime
+
+    print("")
+    print("######### algorithm2")
+    print("")
+    print("")
+    
     Sprime = S[::-1]     # reverse the stack
 
     F1 = np.zeros((kPrime+1,))
     for i in range(1,kPrime+1):
         F1[i] = slope(top(Sprime),nextToTop(Sprime))
+        print(" ##F1 ===> " , F1)
         P[i-1] = P[i-2]+P[i]-P[i-1]
-
         if notBelow(P[i-1],top(Sprime),nextToTop(Sprime)):
             continue
         pop(Sprime)
         while len(Sprime)>1 and nonleftTurn(P[i-1],top(Sprime),nextToTop(Sprime)):
             pop(Sprime)
         push(P[i-1],Sprime)
+
+    print(" #F1 ===> " , F1)
     return F1
 
 def algorithm3(P):
@@ -97,7 +109,6 @@ def algorithm4(P,S):
     for i in range(kPrime,1-1,-1):   # k',k'-1,...,1
         F0[i] = slope(top(Sprime),nextToTop(Sprime))
         P[i] = P[i-1]+P[i+1]-P[i]
-
         if notBelow(P[i],top(Sprime),nextToTop(Sprime)):
             continue
         pop(Sprime)
@@ -108,7 +119,7 @@ def algorithm4(P,S):
 
 def prepareData(calibrPoints):
     global kPrime
-    
+
     ptsSorted = sorted(calibrPoints)
     
     xs = np.fromiter((p[0] for p in ptsSorted),float)
@@ -117,12 +128,23 @@ def prepareData(calibrPoints):
                                                         return_index=True,
                                                         return_counts=True,
                                                         return_inverse=True)
+
+    print("xs =======> ",xs)
+    print("ys =======> ",ys)
+    print("ptsInverse =======> ",ptsInverse)
+
     a = np.zeros(ptsUnique.shape)
+
     np.add.at(a,ptsInverse,ys)
+    print("np.add.at(a,ptsInverse,ys) =======> ",a)
+
     # now a contains the sums of ys for each unique value of the objects
     
     w = ptsCounts
+    print("a = np.zeros(ptsUnique.shape) =======> ",a)
+    print("w = ptsCounts =======> ",w)
     yPrime = a/w
+    print("yPrime =======> ",yPrime)
     yCsd = np.cumsum(w*yPrime)   # Might as well do just np.cumsum(a)
     xPrime = np.cumsum(w)
     kPrime = len(xPrime)
@@ -132,9 +154,14 @@ def prepareData(calibrPoints):
 def computeF(xPrime,yCsd):    
     P = {0:np.array((0,0))}
     P.update({i+1:np.array((k,v)) for i,(k,v) in enumerate(zip(xPrime,yCsd))})
+    print("P =======> ",P)
+    print("zip(xPrime,yCsd) =======> ",enumerate(zip(xPrime,yCsd)))
 
+    
     S = algorithm1(P)
+
     F1 = algorithm2(P,S)
+
     
     # P = {}
     # P.update({i+1:np.array((k,v)) for i,(k,v) in enumerate(zip(xPrime,yCsd))})    
@@ -146,16 +173,22 @@ def computeF(xPrime,yCsd):
 
 def getFVal(F0,F1,ptsUnique,testObjects):
     pos0 = np.searchsorted(ptsUnique[1:],testObjects,side='right')
+    print('ptsUnique[1:] ===== > ' ,ptsUnique[1:])
     pos1 = np.searchsorted(ptsUnique[:-1],testObjects,side='left')+1
+    print('ptsUnique[:-1] ===== > ' ,ptsUnique[:-1])
+    
     return F0[pos0],F1[pos1]
 
 def ScoresToMultiProbs(calibrPoints,testObjects):
     # sort the points, transform into unique objects, with weights and updated values
     yPrime,yCsd,xPrime,ptsUnique = prepareData(calibrPoints)
     
+    # print("")
+    # print(" xPrime ===> " , xPrime)
+    # print(" yCsd ===> " , yCsd)
+    
     # compute the F0 and F1 functions from the CSD
     F0,F1 = computeF(xPrime,yCsd)
-
     
     # compute the values for the given test objects
     p0,p1 = getFVal(F0,F1,ptsUnique,testObjects)
@@ -184,15 +217,18 @@ def ScoresToMultiProbsV2(calibrPoints,testObjects):
     
     yPrime,yCsd,xPrime,ptsUnique = prepareData((-x,1-y) for x,y in calibrPoints)    
     F0 = 1 - computeF1(yCsd,xPrime)
-    print(computeF1(yCsd,xPrime))
     pos0 = np.searchsorted(ptsUnique[:-1],testObjects,side='left')+1
     p0 = F0[pos0]
     
     return p0,p1
 
 
+
+
+
+
 li = [(0.5,0),(0.2,0),(0.7,1),(0.6,1),(0.8,1),(0.9,1)]
-print(ScoresToMultiProbsV2(li,0.1))
+ScoresToMultiProbs(li,[0.4,0.6])
 
 
 
